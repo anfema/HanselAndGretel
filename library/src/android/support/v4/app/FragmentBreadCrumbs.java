@@ -24,7 +24,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -82,6 +84,8 @@ public class FragmentBreadCrumbs extends ViewGroup
     FragmentActivity mActivity;
     LayoutInflater mInflater;
     LinearLayout mContainer;
+    HorizontalScrollView mScrollViewContainer;
+    
     int mMaxVisible = -1;
 
     // Hahah
@@ -130,10 +134,11 @@ public class FragmentBreadCrumbs extends ViewGroup
     public void setActivity(FragmentActivity a) {
         mActivity = a;
         mInflater = (LayoutInflater)a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mContainer = (LinearLayout)mInflater.inflate(
+        mScrollViewContainer = (HorizontalScrollView ) mInflater.inflate(
                 R.layout.hag__fragment_bread_crumbs,
                 this, false);
-        addView(mContainer);
+        mContainer = (LinearLayout) mScrollViewContainer.findViewById(R.id.linear_layout_container); 
+        addView(mScrollViewContainer);
         a.getSupportFragmentManager().addOnBackStackChangedListener(this);
         updateCrumbs();
     }
@@ -256,6 +261,13 @@ public class FragmentBreadCrumbs extends ViewGroup
     @Override
     public void onBackStackChanged() {
         updateCrumbs();
+        
+        // for scrolling to the end of the bar
+        postDelayed(new Runnable() {
+            public void run() {
+                mScrollViewContainer.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+            }
+        }, 100L);
     }
 
     /**
